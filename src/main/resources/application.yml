@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: api-gateway
+zuul:
+  sensitive-headers: Cookie,Set-Cookie
+  ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
+  routes:
+    messagin-service:
+      path: /messaging/**
+    uaa-service:
+      path: /auth/**
+    admin:
+      path: /admin/**
+    trading-service:
+      path: /trading/**
+  ws:
+    brokerages:
+      hello:
+        end-points: /ws
+        brokers:  /topic
+        destination-prefixes: /app
+
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
+
+# Define the port where the API gateway server would be running
+server:
+  port: 8765
+  use-forward-headers: true
+# Define the Eureka server that handles service registration
+eureka:
+  instance:
+    hostname: 192.168.0.11
+    port: 8761
+    leaseRenewalIntervalInSeconds: 10
+    health-check-url-path: /actuator/health
+    preferIpAddress: true
+  client:
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${eureka.instance.port}/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
